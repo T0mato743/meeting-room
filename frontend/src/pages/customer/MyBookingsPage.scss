@@ -1,0 +1,187 @@
+$primary-color: #673ab7;
+$accent-color: #00bcd4;
+$text-color: #333;
+$border-color: #e0e0e0;
+$background-color: #f4f6f8;
+$light-blue: #e6f7ff;
+$light-purple: #f9f0ff;
+
+.my-bookings-page {
+  background: $background-color;
+  min-height: 100vh;
+  padding: 20px;
+
+  .my-bookings-header {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+    padding: 0 24px;
+
+    .page-title {
+      margin-bottom: 32px;
+      color: $primary-color;
+      position: relative;
+      padding-bottom: 16px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, $primary-color, $accent-color);
+        border-radius: 3px;
+      }
+    }
+  }
+
+  .my-bookings-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    
+    .ant-table {
+      border-radius: 8px;
+      overflow: hidden;
+      
+      th {
+        background: rgba($primary-color, 0.05);
+        font-weight: 600;
+        color: darken($text-color, 20%);
+        
+        &:first-child {
+          border-top-left-radius: 8px;
+        }
+        
+        &:last-child {
+          border-top-right-radius: 8px;
+        }
+      }
+      
+      td {
+        border-bottom: 1px solid rgba($border-color, 0.5);
+      }
+      
+      .ant-table-row {
+        transition: background-color 0.3s;
+        
+        &:hover {
+          background-color: rgba($light-blue, 0.3);
+        }
+      }
+      
+      .ant-table-pagination.ant-pagination {
+        margin: 24px 0 8px;
+        float: right;
+        
+        .ant-pagination-item {
+          border-radius: 4px;
+          
+          a {
+            color: $text-color;
+          }
+          
+          &:hover {
+            border-color: $accent-color;
+          }
+          
+          &-active {
+            border-color: $accent-color;
+            background: rgba($accent-color, 0.1);
+            
+            a {
+              color: $accent-color;
+            }
+          }
+        }
+      }
+    }
+    
+    .action-buttons {
+      .ant-btn-link {
+        color: $accent-color;
+        transition: all 0.3s;
+        
+        &:hover {
+          color: lighten($accent-color, 10%);
+          text-decoration: underline;
+        }
+      }
+      
+      .ant-btn-link[disabled] {
+        color: rgba($text-color, 0.25);
+        cursor: not-allowed;
+      }
+      
+      .ant-btn-danger {
+        color: #ff4d4f;
+        transition: all 0.3s;
+        
+        &:hover {
+          color: lighten(#ff4d4f, 10%);
+          text-decoration: underline;
+        }
+      }
+    }
+    
+    .status-tag {
+      border-radius: 4px;
+      padding: 0 8px;
+      font-weight: 500;
+      
+      &.orange {
+        background: rgba(255, 183, 77, 0.2);
+        border-color: rgba(255, 183, 77, 0.5);
+      }
+      
+      &.green {
+        background: rgba(102, 187, 106, 0.2);
+        border-color: rgba(102, 187, 106, 0.5);
+      }
+      
+      &.blue {
+        background: rgba(66, 165, 245, 0.2);
+        border-color: rgba(66, 165, 245, 0.5);
+      }
+    }
+    
+    .empty-container {
+      text-align: center;
+      padding: 40px 20px;
+      
+      .ant-empty-description {
+        color: rgba($text-color, 0.65);
+        font-size: 16px;
+        margin-top: 16px;
+      }
+    }
+  }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .my-bookings-page {
+    padding: 10px;
+    
+    .my-bookings-header {
+      padding: 0 12px;
+    }
+    
+    .my-bookings-content {
+      padding: 16px;
+      
+      .ant-table {
+        overflow-x: auto;
+        
+        table {
+          min-width: 600px;
+        }
+      }
+    }
+  }
+}

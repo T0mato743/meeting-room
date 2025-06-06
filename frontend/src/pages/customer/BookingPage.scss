@@ -1,0 +1,529 @@
+$primary-color: #673ab7;
+$accent-color: #00bcd4;
+$text-color: #333;
+$border-color: #e0e0e0;
+$background-color: #f4f6f8;
+$light-blue: #e6f7ff;
+$light-purple: #f9f0ff;
+
+.booking-page {
+  background: $background-color;
+  min-height: 100vh;
+  padding: 20px;
+
+  .booking-header {
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+    padding: 0 24px;
+
+    .page-title {
+      margin-bottom: 32px;
+      color: $primary-color;
+      position: relative;
+      padding-bottom: 16px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, $primary-color, $accent-color);
+        border-radius: 3px;
+      }
+    }
+
+    .booking-steps {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      
+      .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title {
+        color: $primary-color;
+      }
+    }
+  }
+
+  .booking-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    .search-card, 
+    .confirmation-card, 
+    .payment-card,
+    .result-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      border: none;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    // 搜索卡片
+    .search-card {
+      margin: 0 auto;
+      max-width: 800px;
+      
+      .ant-form {
+        padding: 24px;
+        
+        .search-button {
+          width: 100%;
+          height: 48px;
+          font-size: 16px;
+          background: linear-gradient(to right, $primary-color, $accent-color);
+          border: none;
+          transition: all 0.3s;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+          }
+        }
+      }
+    }
+
+    // 会议室选择页面
+    .room-selection {
+      .back-button-container {
+        margin-bottom: 24px;
+        
+        .back-button {
+          color: $accent-color;
+          font-weight: 500;
+          padding-left: 0;
+          
+          &:hover {
+            color: darken($accent-color, 10%);
+          }
+        }
+      }
+      
+      .section-title {
+        text-align: center;
+        margin-bottom: 32px;
+        color: $primary-color;
+      }
+      
+      .room-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+        
+        @media (max-width: 768px) {
+          grid-template-columns: 1fr;
+        }
+        
+        .room-card {
+          border-radius: 12px;
+          overflow: hidden;
+          border: none;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba($primary-color, 0.15);
+          }
+          
+          .ant-card-head {
+            background: rgba($primary-color, 0.05);
+            border: none;
+          }
+          
+          .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+            span {
+              font-weight: 600;
+              font-size: 16px;
+            }
+          }
+          
+          .room-details {
+            padding: 0 8px;
+            
+            .room-info {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 16px;
+              padding: 0 8px;
+              
+              .info-item {
+                display: flex;
+                flex-direction: column;
+                
+                .price {
+                  color: $primary-color;
+                  font-weight: 600;
+                  font-size: 16px;
+                }
+              }
+            }
+            
+            .equipments {
+              border-top: 1px dashed $border-color;
+              padding-top: 16px;
+              
+              .equipment-tags {
+                margin-top: 8px;
+                
+                .equipment-tag {
+                  margin-bottom: 8px;
+                  background: rgba($accent-color, 0.1);
+                  border-color: rgba($accent-color, 0.3);
+                }
+              }
+            }
+          }
+          
+          .select-button {
+            background: linear-gradient(to right, $primary-color, $accent-color);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+            
+            &:hover {
+              transform: scale(1.03);
+              box-shadow: 0 4px 12px rgba($primary-color, 0.25);
+            }
+          }
+        }
+        
+        .no-rooms-card {
+          text-align: center;
+          padding: 32px;
+          border-radius: 12px;
+          background: rgba($light-purple, 0.5);
+        }
+      }
+    }
+
+    // 确认预订页面
+    .confirmation-step {
+      .back-button-container {
+        margin-bottom: 24px;
+        
+        .back-button {
+          color: $accent-color;
+          font-weight: 500;
+          padding-left: 0;
+          
+          &:hover {
+            color: darken($accent-color, 10%);
+          }
+        }
+      }
+      
+      .confirmation-card {
+        background: transparent;
+        box-shadow: none;
+        
+        .room-info-card, 
+        .booking-details-card {
+          border-radius: 12px;
+          overflow: hidden;
+          height: 100%;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+          
+          .ant-card-head {
+            background: rgba($primary-color, 0.05);
+          }
+        }
+        
+        .room-info-card {
+          .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            
+            .room-name {
+              margin-bottom: 0;
+            }
+          }
+          
+          .room-details {
+            .ant-descriptions-item-label {
+              font-weight: 500;
+            }
+            
+            .equipment-tags {
+              .equipment-tag {
+                margin-bottom: 8px;
+                background: rgba($accent-color, 0.1);
+                border-color: rgba($accent-color, 0.3);
+              }
+            }
+          }
+        }
+        
+        .booking-details-card {
+          .confirm-button {
+            width: 100%;
+            height: 48px;
+            font-size: 16px;
+            background: linear-gradient(to right, $primary-color, $accent-color);
+            border: none;
+            transition: all 0.3s;
+            
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+            }
+          }
+          
+          .booking-summary {
+            background: rgba($light-blue, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            
+            .summary-item {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 12px;
+              font-size: 16px;
+              
+              .total-price {
+                color: $primary-color;
+                font-weight: 600;
+                font-size: 18px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 支付页面
+    .payment-step {
+      .payment-card {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 32px;
+        text-align: center;
+        
+        .payment-header {
+          margin-bottom: 32px;
+          
+          .success-icon {
+            color: $accent-color;
+            font-size: 64px;
+            margin-bottom: 16px;
+          }
+          
+          .payment-title {
+            color: $primary-color;
+            margin-bottom: 8px;
+          }
+          
+          .booking-id {
+            font-size: 16px;
+          }
+        }
+        
+        .countdown-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          background: rgba($light-purple, 0.3);
+          padding: 16px;
+          border-radius: 8px;
+          margin-bottom: 24px;
+          max-width: 300px;
+          margin-left: auto;
+          margin-right: auto;
+          
+          .clock-icon {
+            color: $primary-color;
+            font-size: 24px;
+          }
+          
+          .countdown-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: $primary-color;
+          }
+        }
+        
+        .payment-alert {
+          max-width: 400px;
+          margin: 0 auto 32px;
+          text-align: left;
+        }
+        
+        .booking-details {
+          background: rgba($light-blue, 0.3);
+          padding: 24px;
+          border-radius: 12px;
+          margin-bottom: 32px;
+          text-align: left;
+          
+          .details-list {
+            margin-bottom: 16px;
+            
+            .ant-descriptions-item-label {
+              font-weight: 500;
+            }
+          }
+          
+          .total-amount {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid rgba($border-color, 0.5);
+            margin-top: 16px;
+            
+            .amount {
+              color: $primary-color;
+              margin-bottom: 0;
+            }
+          }
+        }
+        
+        .pay-button {
+          height: 56px;
+          font-size: 18px;
+          background: linear-gradient(to right, $primary-color, $accent-color);
+          border: none;
+          margin: 32px auto;
+          max-width: 400px;
+          transition: all 0.3s;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba($primary-color, 0.3);
+          }
+        }
+        
+        .payment-methods {
+          margin-top: 16px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          
+          .method-icons {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            
+            .method-icon {
+              width: 48px;
+              height: 32px;
+              border-radius: 4px;
+              border: 1px solid rgba($border-color, 0.5);
+              
+              &.wechat-pay {
+                background: linear-gradient(45deg, #07c160, #09d369);
+              }
+              
+              &.alipay {
+                background: linear-gradient(45deg, #1677ff, #36c);
+              }
+              
+              &.bank-card {
+                background: linear-gradient(45deg, #f56c42, #ff9c6e);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 成功页面
+    .success-step {
+      max-width: 800px;
+      margin: 0 auto;
+      
+      .result-card {
+        padding: 40px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        
+        .ant-result {
+          padding: 0;
+          
+          .ant-result-title {
+            color: $primary-color;
+            font-weight: 600;
+          }
+          
+          .booking-info {
+            background: rgba($light-purple, 0.2);
+            padding: 24px;
+            border-radius: 12px;
+            margin-top: 32px;
+            text-align: left;
+          }
+          
+          .ant-btn {
+            height: 44px;
+            padding: 0 32px;
+            font-weight: 500;
+            
+            &:first-child {
+              background: linear-gradient(to right, $primary-color, $accent-color);
+              border: none;
+              color: white;
+              
+              &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba($primary-color, 0.25);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .booking-page {
+    padding: 10px;
+    
+    .booking-header {
+      padding: 0 12px;
+    }
+    
+    .booking-content {
+      .confirmation-card {
+        .ant-row > .ant-col {
+          width: 100%;
+          
+          &:first-child {
+            margin-bottom: 24px;
+          }
+        }
+      }
+      
+      .payment-card {
+        padding: 24px 16px;
+        
+        .booking-details {
+          padding: 16px;
+        }
+      }
+      
+      .success-step {
+        .result-card {
+          padding: 24px;
+        }
+      }
+    }
+  }
+}

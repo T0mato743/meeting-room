@@ -1,0 +1,19 @@
+$primary-color: #673ab7;
+
+.logo {
+    text-align: center;
+    height: 80px;
+    .logo-icon {
+        width: 70px;
+        height: 70px !important;
+        border-radius: 50%;
+        background: $primary-color !important;
+        color: white;
+        display: flex;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 5px 5px 5px 5px !important;
+    }
+}

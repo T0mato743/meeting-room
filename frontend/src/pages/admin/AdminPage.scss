@@ -1,0 +1,361 @@
+.admin-page {
+    padding: 20px;
+    background-color: #f5f7fa;
+    min-height: 100vh;
+
+    .page-header {
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #e8e8e8;
+
+        h1 {
+            font-size: 24px;
+            color: #1d39c4;
+            font-weight: 600;
+        }
+    }
+
+    .table-container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        padding: 20px;
+        margin-bottom: 24px;
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filters-container {
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+            .filters-title {
+                font-weight: 500;
+                color: #1890ff;
+                margin-bottom: 12px;
+                display: flex;
+                align-items: center;
+
+                &:before {
+                    content: "⌕";
+                    margin-right: 8px;
+                    font-size: 16px;
+                }
+            }
+
+            .filters-content {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+
+                .filter-item {
+                    min-width: 200px;
+
+                    label {
+                        display: block;
+                        margin-bottom: 6px;
+                        font-weight: 500;
+                        color: #595959;
+                        font-size: 13px;
+                    }
+                }
+            }
+
+            .actions {
+                margin-top: 16px;
+                display: flex;
+                gap: 8px;
+            }
+        }
+    }
+
+    .ant-table {
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+
+        .ant-table-thead>tr>th {
+            background-color: #f7f7f7;
+            font-weight: 600;
+            color: #1d39c4;
+        }
+
+        .ant-table-tbody>tr>td {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s ease;
+        }
+
+        .ant-table-tbody>tr:hover>td {
+            background-color: #f0f9ff !important;
+        }
+    }
+
+    .action-button {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .anticon {
+            font-size: 14px;
+            margin-right: 6px;
+        }
+    }
+
+    .ant-tag {
+        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 12px;
+        min-width: 70px;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .ant-modal {
+        .ant-modal-header {
+            border-bottom: none;
+            padding: 20px 24px;
+            background: #f8fafc;
+
+            .ant-modal-title {
+                font-weight: 600;
+                color: #1d39c4;
+            }
+        }
+
+        .ant-modal-body {
+            padding: 24px;
+        }
+
+        .ant-modal-footer {
+            border-top: 1px solid #f0f0f0;
+            padding: 16px 24px;
+        }
+
+        .ant-form-item-label>label {
+            font-weight: 500;
+            color: #595959;
+        }
+    }
+
+    .ant-picker {
+        width: 100%;
+
+        &.ant-picker-range {
+            width: 300px;
+        }
+    }
+
+    .status-tag {
+        &-green {
+            background-color: #f6ffed;
+            border-color: #b7eb8f;
+            color: #52c41a;
+        }
+
+        &-red {
+            background-color: #fff1f0;
+            border-color: #ffa39e;
+            color: #f5222d;
+        }
+
+        &-orange {
+            background-color: #fff7e6;
+            border-color: #ffd591;
+            color: #fa8c16;
+        }
+
+        &-blue {
+            background-color: #e6f7ff;
+            border-color: #91d5ff;
+            color: #1890ff;
+        }
+
+        &-gray {
+            background-color: #f5f5f5;
+            border-color: #d9d9d9;
+            color: #595959;
+        }
+    }
+
+    .empty-container {
+        text-align: center;
+        padding: 40px 0;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+        .empty-icon {
+            font-size: 48px;
+            color: #e8e8e8;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 16px;
+            color: #595959;
+            margin-bottom: 16px;
+        }
+    }
+}
+
+// 用户管理特定样式
+.user-management {
+    .status-cell {
+        display: inline-flex;
+        align-items: center;
+
+        .ant-badge-status-dot {
+            width: 10px;
+            height: 10px;
+            margin-right: 8px;
+        }
+    }
+
+    .role-cell {
+        font-weight: 500;
+
+        &-admin {
+            color: #722ed1;
+        }
+
+        &-staff {
+            color: #fa8c16;
+        }
+
+        &-customer {
+            color: #52c41a;
+        }
+    }
+}
+
+// 会议室管理特定样式
+.meeting-room-management {
+    .equipment-list {
+        max-width: 300px;
+
+        .equipment-item {
+            display: inline-block;
+            background: #f0f9ff;
+            color: #1890ff;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+    }
+
+    .capacity-cell {
+        font-weight: 600;
+        color: #fa8c16;
+    }
+
+    .price-cell {
+        font-weight: 600;
+        color: #52c41a;
+
+        &:before {
+            content: "¥";
+            margin-right: 2px;
+        }
+    }
+}
+
+// 预订管理特定样式
+.booking-management {
+    .filters-container {
+        .filters-content {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+
+            .filter-item {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+
+                label {
+                    display: block;
+                    font-weight: 500;
+                    margin-bottom: 6px;
+                    color: #595959;
+                    font-size: 14px;
+                    height: 22px;
+                }
+
+                .ant-select,
+                .ant-picker {
+                    height: 32px;
+                }
+            }
+
+            .date-range-container {
+                flex: 1;
+                max-width: 320px;
+
+                label {
+                    display: block;
+                    font-weight: 500;
+                    margin-bottom: 6px;
+                    color: #595959;
+                    font-size: 14px;
+                    height: 22px;
+                }
+
+                .ant-picker {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+
+    .data-filter-info {
+        flex: 1;
+        margin-left: 16px;
+        background: #f8f8f8;
+        border-radius: 4px;
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #595959;
+        display: flex;
+        align-items: center;
+
+        &:before {
+            content: "ℹ️";
+            margin-right: 8px;
+        }
+    }
+
+    .time-cell {
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .amount-cell {
+        font-weight: 600;
+        color: #52c41a;
+
+        &:before {
+            content: "¥";
+            margin-right: 2px;
+        }
+    }
+}
