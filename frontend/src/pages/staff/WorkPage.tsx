@@ -11,35 +11,71 @@ import {
     Divider,
     message,
     Skeleton,
-    Empty
+    Empty,
+    Timeline,
+    Tag,
 } from 'antd';
 import {
     SyncOutlined,
     CheckCircleOutlined,
     WarningOutlined,
-    ClockCircleOutlined
+    ClockCircleOutlined,
+    StopOutlined
 } from '@ant-design/icons';
 import { meetingRoomApi } from '@/api/meetingRoom';
+import { bookingApi } from '@/api/booking';
 import type { MeetingRoom } from '@/types/types';
+import type { Booking } from '@/types/types';
 import './WorkPage.scss';
+import moment from 'moment';
 
-const { Title } = Typography;
+const { Text, Title } = Typography;
 
 const StaffWorkPage: React.FC = () => {
     const [rooms, setRooms] = useState<MeetingRoom[]>([]);
+    const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // 获取所有会议室及其状态
-    const fetchRooms = async () => {
+    const fetchData = async () => {
         setLoading(true);
         try {
-            const data = await meetingRoomApi.listMeetingRooms();
-            if (Array.isArray(data)) {
-                setRooms(data);
+            const params: Record<string, any> = {};
+            // 并行获取会议室和预订数据
+            const [roomsData, bookingsData] = await Promise.all([
+                meetingRoomApi.listMeetingRooms(),
+                bookingApi.getCustomerBookings(params)
+            ]);
+
+            if (Array.isArray(roomsData)) {
+                // 检查当前时间是否在营业时间内
+                const currentHour = new Date().getHours();
+                const isBusinessHours = currentHour >= 8 && currentHour < 21;
+
+                // 如果不在营业时间，将所有会议室状态设置为锁定
+                const updatedRooms = roomsData.map(room => ({
+                    ...room,
+                    status: isBusinessHours ? room.status : '锁定',
+                    originalStatus: room.status
+                }));
+
+                setRooms(updatedRooms);
+                console.log(rooms);
             }
+
+            if (Array.isArray(bookingsData)) {
+                const currentTime = new Date();
+                const oldbookings = bookingsData.filter(booking =>
+                    booking.payment_status !== '已退款'
+                );
+                const futureBookings = oldbookings.filter(booking =>
+                    new Date(booking.start_time) > currentTime,
+                );
+                setBookings(futureBookings);
+
+            }
+
         } catch (error) {
-            message.error('获取会议室信息失败');
-            setRooms([]);
+            message.error('获取数据失败');
             console.error(error);
         } finally {
             setLoading(false);
@@ -47,15 +83,34 @@ const StaffWorkPage: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchRooms();
+        // fetchRooms();
+        fetchData();
+
+        const timer = setInterval(() => {
+            const currentHour = new Date().getHours();
+            const isBusinessHours = currentHour >= 8 && currentHour < 21;
+
+            setRooms(prevRooms =>
+                prevRooms.map(room => ({
+                    ...room,
+                    status: isBusinessHours ? room.status : '锁定'
+                }))
+            );
+        }, 60000);
+
+        return () => clearInterval(timer);
     }, []);
+
+    const getRoomBookings = (roomId: number) => {
+        return bookings.filter(booking => booking.room_id === roomId);
+    };
 
     // 设置会议室为使用中状态
     const setToInUse = async (roomId: number) => {
         try {
             await meetingRoomApi.updateMeetingRoom(roomId, { status: '使用' });
             message.success('会议室已设置为使用中');
-            fetchRooms();
+            fetchData();
         } catch (error) {
             message.error('操作失败');
             console.error(error);
@@ -67,7 +122,7 @@ const StaffWorkPage: React.FC = () => {
         try {
             await meetingRoomApi.updateMeetingRoom(roomId, { status: '空闲' });
             message.success('会议室已设置为空闲');
-            fetchRooms();
+            fetchData();
         } catch (error) {
             message.error('操作失败');
             console.error(error);
@@ -79,7 +134,7 @@ const StaffWorkPage: React.FC = () => {
         try {
             await meetingRoomApi.updateMeetingRoom(roomId, { status: '维护' });
             message.success('会议室已设置为维护中');
-            fetchRooms();
+            fetchData();
         } catch (error) {
             message.error('操作失败');
             console.error(error);
@@ -104,7 +159,7 @@ const StaffWorkPage: React.FC = () => {
             case '预定': return '已预定';
             case '使用': return '使用中';
             case '维护': return '维护中';
-            default: return '未知';
+            default: return '锁定';
         }
     };
 
@@ -115,7 +170,7 @@ const StaffWorkPage: React.FC = () => {
             case '预定': return <ClockCircleOutlined />;
             case '使用': return <SyncOutlined spin />;
             case '维护': return <WarningOutlined />;
-            default: return null;
+            default: return <StopOutlined />;
         }
     };
 
@@ -126,112 +181,180 @@ const StaffWorkPage: React.FC = () => {
             case '预定': return 'status-reserved';
             case '使用': return 'status-in-use';
             case '维护': return 'status-maintenance';
+            case '锁定': return 'status-locked';
             default: return '';
         }
     };
 
-    // 渲染会议室状态卡片 - 优化宽度
-    const renderRoomCard = (room: MeetingRoom) => (
-        <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={18} key={room.room_id}>
-            <Card
-                className={`room-card ${getStatusClass(room.status)}`}
-                title={room.name}
-                loading={loading}
-                style={{ height: '100%', borderRadius: '8px' }}
-            >
-                <div className="room-details">
-                    <div className="room-status">
-                        {getStatusIcon(room.status)}
-                        <Badge
-                            status={getStatusColor(room.status) as any}
-                            text={<span style={{ fontSize: '16px' }}>{getStatusText(room.status)}</span>}
-                        />
+    const renderBookingTimeline = (roomBookings: Booking[]) => {
+        if (!roomBookings || roomBookings.length === 0) {
+            return <Text type="secondary" className="text">当前无预订</Text>;
+        }
+
+        const items = roomBookings.map((booking) => {
+            return {
+                key: booking.booking_id,
+                children: (
+                    <div className="booking-details">
+                        <Text strong>
+                            {moment(booking.start_time).format('MM-DD HH:mm')}-
+                            {moment(booking.end_time).format('HH:mm')}
+                        </Text>
+                        <Tag
+                            color={booking.payment_status === '已付' ? 'green' : 'orange'}
+                            className="payment-tag"
+                        >
+                            {booking.payment_status || '未知状态'}
+                        </Tag>
                     </div>
+                ),
+            };
+        });
 
-                    <div className="room-info">
+        return <Timeline mode="left" items={items} className="booking-timeline" />;
+    }
 
-                        <span className="room-type-label">{room.type}会议室</span>
-                    </div>
+    // 渲染会议室状态卡片
+    const renderRoomCard = (room: MeetingRoom) => {
+        const currentHour = new Date().getHours();
+        const isBusinessHours = currentHour >= 8 && currentHour < 21;
+        const roomBookings = getRoomBookings(room.room_id);
 
-                    <div className="room-extra-info">
+        return (
+            <Col xs={24} sm={24} md={12} lg={8} xl={8} xxl={18} key={room.room_id}>
+                <Card
+                    className={`room-card ${getStatusClass(room.status)}`}
+                    title={
+                        <div className="room-title">
+                            <span>{room.name}</span>
+                            <Tag color={getStatusColor(room.status)} className="status-tag">
+                                {getStatusText(room.status)}
+                            </Tag>
+                        </div>
+                    }
+                    loading={loading}
+                    style={{ height: '100%', borderRadius: '8px' }}
+                >
+                    <div className="room-details">
+                        <div className="room-status">
+                            {getStatusIcon(room.status)}
+                            <Badge
+                                status={getStatusColor(room.status) as "default" | "success" | "processing" | "error" | "warning"}
+                                text={<span style={{ fontSize: '16px' }}>{getStatusText(room.status)}</span>}
+                            />
+                        </div>
 
-                        {room.capacity && (
-                            <div className="room-info-item">
-                                <strong>容量:</strong> {room.capacity}人
+                        <div className="room-info">
+
+                            <span className="room-type-label">{room.type}会议室</span>
+                        </div>
+
+                        <div className="room-extra-info">
+
+                            {room.capacity && (
+                                <div className="room-info-item">
+                                    <strong>容量:</strong> {room.capacity}人
+                                </div>
+                            )}
+
+                            {room.price_per_hour && (
+                                <div className="room-info-item">
+                                    <strong>价格:</strong> ¥{room.price_per_hour}/小时
+                                </div>
+                            )}
+                        </div>
+
+                        <Divider className="room-divider" />
+
+                        <div className="booking-section">
+                            <Text strong>预订时间段:</Text>
+                            <div className="booking-timeline-container">
+                                {renderBookingTimeline(roomBookings)}
                             </div>
-                        )}
+                        </div>
 
-                        {room.price_per_hour && (
-                            <div className="room-info-item">
-                                <strong>价格:</strong> ¥{room.price_per_hour}/小时
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="room-actions">
-                        {room.status === '预定' && (
-                            <Tooltip title="客户开始使用后设置">
-                                <Button
-                                    type="primary"
-                                    onClick={() => setToInUse(room.room_id)}
-                                    block
-                                    className="action-button"
-                                >
-                                    设为使用中
-                                </Button>
-                            </Tooltip>
-                        )}
-
-                        {room.status === '使用' && (
-                            <div className="action-group">
-                                <Popconfirm
-                                    title="确认会议室正常可以继续使用？"
-                                    onConfirm={() => setToVacant(room.room_id)}
-                                    okText="确认"
-                                    cancelText="取消"
-                                    placement="bottom"
-                                >
-                                    <Button type="primary" block className="action-button">
-                                        设为空闲
+                        <div className="room-actions">
+                            {!isBusinessHours ? (
+                                <Tooltip title="非营业时间（8:00-21:00）">
+                                    <Button disabled block>
+                                        非营业时间
                                     </Button>
-                                </Popconfirm>
+                                </Tooltip>
+                            ) : (
+                                <>
+                                    {room.status === '预定' && (
+                                        <Tooltip title="客户开始使用后设置">
+                                            <Button
+                                                type="primary"
+                                                onClick={() => setToInUse(room.room_id)}
+                                                block
+                                                className="action-button"
+                                            >
+                                                设为使用中
+                                            </Button>
+                                        </Tooltip>
+                                    )}
 
-                                <Popconfirm
-                                    title="确认会议室需要维护？"
-                                    onConfirm={() => setToMaintenance(room.room_id)}
-                                    okText="确认"
-                                    cancelText="取消"
-                                    placement="bottom"
-                                >
-                                    <Button type="dashed" danger block className="action-button">
-                                        设为维护
-                                    </Button>
-                                </Popconfirm>
-                            </div>
-                        )}
+                                    {room.status === '使用' && (
+                                        <div className="action-group">
+                                            <Popconfirm
+                                                title="确认会议室正常可以继续使用？"
+                                                onConfirm={() => setToVacant(room.room_id)}
+                                                okText="确认"
+                                                cancelText="取消"
+                                                placement="bottom"
+                                            >
+                                                <Button type="primary" block className="action-button">
+                                                    设为空闲
+                                                </Button>
+                                            </Popconfirm>
 
-                        {room.status === '维护' && (
-                            <Tooltip title="维护完成后设置">
-                                <Button
-                                    type="primary"
-                                    onClick={() => setToVacant(room.room_id)}
-                                    block
-                                    className="action-button"
-                                >
-                                    设为空闲
-                                </Button>
-                            </Tooltip>
-                        )}
+                                            <Popconfirm
+                                                title="确认会议室需要维护？"
+                                                onConfirm={() => setToMaintenance(room.room_id)}
+                                                okText="确认"
+                                                cancelText="取消"
+                                                placement="bottom"
+                                            >
+                                                <Button type="dashed" danger block className="action-button">
+                                                    设为维护
+                                                </Button>
+                                            </Popconfirm>
+                                        </div>
+                                    )}
+
+                                    {room.status === '维护' && (
+                                        <Tooltip title="维护完成后设置">
+                                            <Button
+                                                type="primary"
+                                                onClick={() => setToVacant(room.room_id)}
+                                                block
+                                                className="action-button"
+                                            >
+                                                设为空闲
+                                            </Button>
+                                        </Tooltip>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </Card>
-        </Col>
-    );
+                </Card>
+            </Col>)
+    };
 
     return (
         <div className="work-page-container">
             <div className="page-header">
                 <Title level={3}>会议室状态管理</Title>
+                <Button
+                    type="primary"
+                    icon={<SyncOutlined />}
+                    onClick={fetchData}
+                    className="refresh-button"
+                >
+                    刷新数据
+                </Button>
                 <Divider />
             </div>
 
@@ -272,7 +395,7 @@ const StaffWorkPage: React.FC = () => {
                                     <Title level={4} className="empty-title">未找到会议室信息</Title>
                                     <Button
                                         type="primary"
-                                        onClick={fetchRooms}
+                                        onClick={fetchData}
                                         icon={<SyncOutlined />}
                                         className="reload-button"
                                     >

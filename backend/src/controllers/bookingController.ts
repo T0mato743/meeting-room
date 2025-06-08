@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { safeExecute } from '../utils/dbUtils';
 import { Booking } from '../types/Booking.interface';
+import pool from '../config/db';
 
 // 提交预约要求 - 查询可用会议室
 export const findAvailableRooms = async (req: Request, res: Response) => {
@@ -239,7 +240,7 @@ export const getCustomerBookings = async (req: Request, res: Response) => {
         let query = `
             SELECT 
                 b.booking_id, b.start_time, b.end_time, b.total_amount, b.payment_status, 
-                b.created_at,
+                b.created_at, b.room_id,
                 mr.name AS room_name, mr.type AS room_type, mr.capacity, mr.price_per_hour,
                 u.username AS customer_name
             FROM bookings b
@@ -338,7 +339,7 @@ export const cancelBooking = async (req: Request, res: Response) => {
         // 更新订单状态为待退款
         await safeExecute(
             `UPDATE bookings 
-                 SET payment_status = '已退款' 
+                 SET payment_status = '待审核' 
                  WHERE booking_id = ?`,
             [bookingId]
         );
@@ -364,4 +365,32 @@ export const getCancellationPolicy = async (req: Request, res: Response) => {
             { hoursBefore: 0, refundRate: 0, description: '24小时内取消，不予退款' }
         ]
     });
+};
+
+export const updateBooking = async (req: Request, res: Response) => {
+    try {
+        const bookingId = parseInt(req.params.bookingId);
+        const { payment_status } = req.body;
+
+        const [bookingRows] = await pool.execute(
+            `SELECT * FROM bookings WHERE booking_id = ?`,
+            [bookingId]
+        ) as any
+
+        if (bookingRows.length === 0) {
+            return res.status(404).json({ message: '订单不存在' });
+        }
+
+        await pool.execute(
+            `UPDATE bookings 
+             SET payment_status = ?
+             WHERE booking_id = ?`,
+            [payment_status || bookingRows[0].payment_status, bookingId]
+        );
+
+        res.status(200).json({ message: '订单状态更新成功' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: '服务器错误' });
+    }
 };

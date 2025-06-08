@@ -1,5 +1,9 @@
 import express from 'express';
-import { getAllEquipments, createEquipment } from '../controllers/equipmentController';
+import {
+    getAllEquipments,
+    createEquipment,
+    deleteEquipment,
+} from '../controllers/equipmentController';
 
 const router = express.Router();
 
@@ -15,4 +19,11 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+router.delete('/:equipmentId', async (req, res, next) => {
+    try {
+        await deleteEquipment(req, res);
+    } catch (error) {
+        next(error)
+    }
+})
 export default router;

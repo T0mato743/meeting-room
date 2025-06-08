@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Space, Modal, Form, Input, Select, Tag, message } from 'antd';
+import { Button, Table, Space, Modal, Form, Input, Select, Tag, message, Popconfirm } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { meetingRoomApi } from '@/api/meetingRoom';
 import type { Equipment, MeetingRoom } from '@/types/types';
@@ -65,22 +65,17 @@ const MeetingRoomManagement: React.FC = () => {
     };
 
     const handleDelete = async (roomId: number) => {
-        Modal.confirm({
-            title: '确认删除会议室',
-            content: '确定要删除这个会议室吗？此操作不可恢复。',
-            onOk: async () => {
-                try {
-                    await meetingRoomApi.deleteMeetingRoom(roomId);
-                    message.success('会议室删除成功');
-                    fetchRooms();
-                } catch (error) {
-                    message.error('删除会议室失败');
-                    console.log(error);
 
-                }
-            }
-        });
-    };
+        try {
+            await meetingRoomApi.deleteMeetingRoom(roomId);
+            message.success('会议室删除成功');
+            fetchRooms();
+        } catch (error) {
+            message.error('删除会议室失败');
+            console.log(error);
+        }
+    }
+
 
     const handleSubmit = async () => {
         try {
@@ -159,14 +154,20 @@ const MeetingRoomManagement: React.FC = () => {
                     >
                         编辑
                     </Button>
-                    <Button
-                        type="link"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.room_id)}
-                    >
-                        删除
-                    </Button>
+                    <Popconfirm
+                        title="确定删除这个会议室吗？"
+                        onConfirm={() => handleDelete(record.room_id)}
+                        okText="确定"
+                        cancelText="取消">
+                        <Button
+                            type="link"
+                            danger
+                            icon={<DeleteOutlined />}
+                        >
+                            删除
+                        </Button>
+                    </Popconfirm>
+
                 </Space>
             ),
         },
@@ -191,7 +192,7 @@ const MeetingRoomManagement: React.FC = () => {
                     loading={loading}
                 />
             </div>
-            
+
             <Modal
                 title={editingRoom ? '编辑会议室' : '添加会议室'}
                 open={visible}

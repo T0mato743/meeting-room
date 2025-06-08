@@ -100,5 +100,16 @@ export const meetingRoomApi = {
       message.error('创建设备失败');
       throw error;
     }
+  },
+
+  //删除设备
+  deleteEquipment: async (equipmentId: number): Promise<void> => {
+    try {
+      await axiosInstance.delete(`${API_URL}/equipments/${equipmentId}`);
+      message.success('设备删除成功');
+    } catch (error) {
+      message.error('删除设备失败');
+      throw error;
+    }
   }
 };

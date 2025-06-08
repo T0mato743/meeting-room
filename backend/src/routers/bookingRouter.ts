@@ -5,7 +5,8 @@ import {
     payBooking,
     getCustomerBookings,
     cancelBooking,
-    getCancellationPolicy
+    getCancellationPolicy,
+    updateBooking
 } from '../controllers/bookingController';
 import { authenticateJWT, requireCustomer } from '../middleware/authMiddleware';
 
@@ -61,4 +62,12 @@ router.post('/:bookingId/cancel', requireCustomer as RequestHandler, async (req,
 // 获取取消规则
 router.get('/cancellation-policy', requireCustomer as RequestHandler, getCancellationPolicy);
 
+// 更新订单状态
+router.put('/:bookingId/update', async (req, res, next) => {
+    try {
+        await updateBooking(req, res);
+    } catch (error) {
+        next(error)
+    }
+})
 export default router;

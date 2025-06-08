@@ -50,19 +50,4 @@ export const authApi = {
       throw error;
     }
   },
-
-  getCurrentUser: async (token: string): Promise<AuthResponse> => {
-    try {
-      const response = await axiosInstance.get(`${API_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      localStorage.setItem('token', response.data.token);
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
 };

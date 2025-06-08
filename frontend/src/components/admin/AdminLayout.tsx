@@ -5,7 +5,8 @@ import {
   HomeOutlined,
   CalendarOutlined,
   LogoutOutlined,
-  DownOutlined
+  DownOutlined,
+  ToolOutlined,
 } from '@ant-design/icons';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import '../logo.scss'
@@ -31,6 +32,11 @@ const AdminLayout: React.FC = () => {
       key: '/admin/bookings',
       icon: <CalendarOutlined />,
       label: <Link to="/admin/bookings">预订管理</Link>,
+    },
+    {
+      key: '/admin/equipments',
+      icon: <ToolOutlined />,
+      label: <Link to="/admin/equipments">设备管理</Link>,
     }
   ];
 
@@ -71,6 +77,7 @@ const AdminLayout: React.FC = () => {
           items={menuItems}
         />
       </Sider>
+      
       <Layout>
         <Header
           style={{

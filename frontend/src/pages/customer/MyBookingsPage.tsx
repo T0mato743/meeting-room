@@ -15,8 +15,9 @@ const MyBookings: React.FC = () => {
 
     const fetchBookings = async () => {
         setLoading(true);
+        const params: Record<string, any> = {};
         try {
-            const data = await bookingApi.getCustomerBookings();
+            const data = await bookingApi.getCustomerBookings(params);
             if (Array.isArray(data)) {
                 setBookings(data);
             }
@@ -80,7 +81,8 @@ const MyBookings: React.FC = () => {
                 const statusMap: Record<string, { color: string; text: string }> = {
                     未付: { color: 'orange', text: '未支付' },
                     已付: { color: 'green', text: '已支付' },
-                    已退款: { color: 'blue', text: '已退款' }
+                    已退款: { color: 'blue', text: '已退款' },
+                    待审核: { color: 'red', text: '待审核' }
                 };
                 const statusInfo = statusMap[status] || { color: 'default', text: status };
                 return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>;

@@ -38,3 +38,29 @@ export const createEquipment = async (req: Request, res: Response) => {
         res.status(500).json({ message: '服务器错误' });
     }
 }
+
+export const deleteEquipment = async (req: Request, res: Response) => {
+    try {
+        const equipmentId = parseInt(req.params.equipmentId);
+
+        const [equipmentRows] = await pool.execute(
+            `SELECT * FROM equipments WHERE equipment_id = ?`,
+            [equipmentId]
+        ) as any;
+
+        if (equipmentRows.length === 0) {
+            return res.status(404).json({ message: '设备不存在' });
+        }
+
+        // 删除设备
+        await pool.execute(
+            `DELETE FROM equipments WHERE equipment_id = ?`,
+            [equipmentId]
+        );
+
+        res.status(200).json({ message: '设备删除成功' });
+    } catch (error) {
+        console.error('删除设备错误:', error);
+        res.status(500).json({ message: '服务器错误' });
+    }
+};

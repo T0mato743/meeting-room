@@ -6,8 +6,11 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import MeetingRoomManagement from './pages/admin/MeetingRoomManagementPage';
 import UserManagement from './pages/admin/UserManagementPage';
 import BookingManagement from './pages/admin/BookingManagementPage';
+import EquipmentManagement from './pages/admin/EquipmentManagementPage'
 import BookingPage from './pages/customer/BookingPage';
 import MyBookings from './pages/customer/MyBookingsPage';
+import StaffWorkPage from './pages/staff/WorkPage';
+import StaffBookingManagement from './pages/staff/BookingManagementPage'
 import AdminLayout from './components/admin/AdminLayout';
 import CustomerLayout from './components/customer/CustomerLayout';
 import StaffLayout from './components/staff/StaffLayout';
@@ -72,6 +75,7 @@ function AppRoutes() {
             <Route path="meeting-rooms" element={<MeetingRoomManagement />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="bookings" element={<BookingManagement />} />
+            <Route path="equipments" element={<EquipmentManagement />} />
           </Route>
 
           {/* 客户路由 */}
@@ -82,7 +86,11 @@ function AppRoutes() {
           </Route>
 
           {/* 员工路由 */}
-          <Route path="/staff" element={<StaffRoute element={<StaffLayout />} />} />
+          <Route path="/staff" element={<StaffRoute element={<StaffLayout />} />}>
+            <Route index element={<Navigate to="work" replace />} />
+            <Route path="work" element={<StaffWorkPage />} />
+            <Route path="bookmanagement" element={<StaffBookingManagement />} />
+          </Route>
         </Routes>
       </AnimatePresence>
     </div>

@@ -83,4 +83,19 @@ export const bookingApi = {
       throw error;
     }
   },
+
+  updateBooking: async (
+    bookingId: number,
+
+    payment_status: '未付' | '已付' | '已退款' | '待审核',
+  ): Promise<Booking> => {
+    try {
+      const response = await axiosInstance.put(`${API_URL}/bookings/${bookingId}/update`, { payment_status });
+      message.success('订单更新成功')
+      return response.data;
+    } catch (error) {
+      message.error('更新订单失败');
+      throw error;
+    }
+  }
 };

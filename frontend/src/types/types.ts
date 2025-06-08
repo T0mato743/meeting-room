@@ -28,6 +28,7 @@ export interface Equipment {
 
 // 会议室类型
 export interface MeetingRoom {
+  roomId: number;
   room_id: number;
   name: string;
   type: '教室型' | '圆桌型';
@@ -46,10 +47,10 @@ export interface Booking {
   room_name?: string;
   room_type?: string;
   user_name?: string;
-  start: string;
-  end: string;
+  start_time: string;
+  end_time: string;
   created_at: string;
-  payment_status: '未付' | '已付' | '已退款';
+  payment_status: '未付' | '已付' | '已退款' | '待审核';
   totalAmount: number;
 }
 
